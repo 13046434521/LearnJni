@@ -1,0 +1,2 @@
+# LearnJni
+LearnJNI
