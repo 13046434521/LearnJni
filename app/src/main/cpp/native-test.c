@@ -12,7 +12,7 @@
 JNIEXPORT
 jstring
 JNICALL
-Java_com_android_learn_1jni_MainActivity_changeName(JNIEnv *env,jobject jobject1){
+Java_com_android_learn_1jni_MainActivity_changeNameByC(JNIEnv *env,jclass jobject1){
     jstring  name = (*env)->NewStringUTF(env,"JTL is best");
 
     return name;

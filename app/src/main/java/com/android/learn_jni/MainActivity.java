@@ -16,8 +16,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private ActivityMainBinding binding;
-
-
+    private String name  = "JAVA_NAME";
+    private StringBuilder mStringBuilder = new StringBuilder();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -28,7 +28,12 @@ public class MainActivity extends AppCompatActivity {
         // Example of a call to a native method
         TextView tv = binding.sampleText;
         tv.setText(stringFromJNI());
-        tv.setText(changeName());
+
+        mStringBuilder.append(changeNameByC()+"\n");
+        mStringBuilder.append("没修改的name:"+name+"\n");
+        changeNameByCpp();
+        mStringBuilder.append("修改过的name:"+name+"\n");
+        tv.setText(mStringBuilder.toString());
     }
 
     /**
@@ -37,7 +42,7 @@ public class MainActivity extends AppCompatActivity {
      */
     public native String stringFromJNI();
 
-    public native static String staticTest();
+    public native void changeNameByCpp();
 
-    public native static String changeName();
+    public native static String changeNameByC();
 }

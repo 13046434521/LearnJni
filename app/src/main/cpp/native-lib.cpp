@@ -29,7 +29,23 @@ Java_com_android_learn_1jni_MainActivity_stringFromJNI(
     return env->NewStringUTF(hello.c_str());
 }
 extern "C"
-JNIEXPORT jstring JNICALL
-Java_com_android_learn_1jni_MainActivity_staticTest(JNIEnv *env, jclass clazz) {
-    // TODO: implement changeName()
+JNIEXPORT void JNICALL
+Java_com_android_learn_1jni_MainActivity_changeNameByCpp(JNIEnv *env, jobject thiz) {
+    // 两种获取类的方法
+    // 1. 直接通过全类名，来获取Class
+    // 2. 通过传进来的对象来获取。这里是this
+    jclass clazz1 =env->FindClass("com/android/learn_jni/MainActivity");
+    jclass clazz2 = env->GetObjectClass(thiz);
+
+    // 获取要修改的对象的属性:String 的全类名是Ljava/lang/String; 这里的L代表的是引用类型
+    jfieldID  jfieldId = env->GetFieldID(clazz1,"name", "Ljava/lang/String;");
+    jstring name = env->NewStringUTF("Jtl 学习 JNI");
+
+    // 修改对象属性： env->SetObjectField(对象,属性,修改值);
+    env->SetObjectField(thiz,jfieldId,name);
+
+    // 回收创建的对象
+    env->DeleteLocalRef(name);
+    env->DeleteLocalRef(clazz1);
+    env->DeleteLocalRef(clazz2);
 }
