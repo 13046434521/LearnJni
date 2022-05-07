@@ -8,6 +8,7 @@ cmake_minimum_required(VERSION 3.18.1)
 # Declares and names the project.
 
 project("learnjni")
+include_directories( ${CMAKE_CURRENT_LIST_DIR})
 
 # Creates and names a library, sets it as either STATIC
 # or SHARED, and provides the relative paths to its source code.
@@ -22,7 +23,8 @@ add_library( # Sets the name of the library.
 
         # Provides a relative path to your source file(s).
         native-lib.cpp
-        native-test.c)
+        native-test.c
+        log.cpp)
 
 # Searches for a specified prebuilt library and stores the path as a
 # variable. Because CMake includes system libraries in the search path by

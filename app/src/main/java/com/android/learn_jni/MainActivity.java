@@ -3,6 +3,8 @@ package com.android.learn_jni;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
 import android.widget.TextView;
 
 import com.android.learn_jni.databinding.ActivityMainBinding;
@@ -17,6 +19,8 @@ public class MainActivity extends AppCompatActivity {
 
     private ActivityMainBinding binding;
     private String name  = "JAVA_NAME";
+    private static int age = 20;
+    private final double height = 180.00;
     private StringBuilder mStringBuilder = new StringBuilder();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,7 +37,27 @@ public class MainActivity extends AppCompatActivity {
         mStringBuilder.append("没修改的name:"+name+"\n");
         changeNameByCpp();
         mStringBuilder.append("修改过的name:"+name+"\n");
+        mStringBuilder.append("修改前的age:"+age+"\n");
+        changeAgeByCpp();
+        mStringBuilder.append("修改后的age:"+age+"\n");
+
+        mStringBuilder.append("修改前的final:height:"+height+"\n");
+        Log.w("height","修改前的final:height:"+height);
+        changeHeightByCpp();
+        Log.w("height","修改后的final:height:"+height);
+        mStringBuilder.append("修改后的final:height:"+height+"\n");
         tv.setText(mStringBuilder.toString());
+        mStringBuilder.append("----------------------------------"+"\n");
+        tv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                double height1= getHeightByCpp();
+                mStringBuilder.append("Java中获取到的height:"+height+"\n");
+                Log.w("height","Java中获取C++中获取到的height:"+height1);
+                mStringBuilder.append("Java中获取C++中获取到的height:"+height1+"\n");
+                tv.setText(mStringBuilder.toString());
+            }
+        });
     }
 
     /**
@@ -44,5 +68,11 @@ public class MainActivity extends AppCompatActivity {
 
     public native void changeNameByCpp();
 
+    public native static void changeAgeByCpp();
+
     public native static String changeNameByC();
+
+    public native void changeHeightByCpp();
+
+    public native int getHeightByCpp();
 }

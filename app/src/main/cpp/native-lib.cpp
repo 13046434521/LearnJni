@@ -1,5 +1,6 @@
 #include <jni.h>
 #include <string>
+#include "log.h"
 //#if defined(__cplusplus)
 //typedef _JNIEnv JNIEnv;
 //typedef _JavaVM JavaVM;
@@ -7,7 +8,8 @@
 //typedef const struct JNINativeInterface* JNIEnv;
 //typedef const struct JNIInvokeInterface* JavaVM;
 //#endif
-//extern "C"告诉编译器，这部分代码使用C语言规则来进行编译
+//extern "C" 主要作用就是为了能够正确实现C++代码调用其他C语言代码。加上 extern “c” 后，会指示编译器这部分的代码按C语言，而不是C++的方式进行编译。
+// C没有重载，而C++有重载。同样一个方法void fun(int,int) 在C中编译完可能对应的就是_fun,而C++中可能就是_fun_int_int，会把参数带上。
 // JNIEXPORT和JNICALL是jni中定义的两个宏，使用JNIEXPORT支持在外部程序代码中调用该动态库中的方法，
 // 使用JNICALL定义函数调用时参数的入栈出栈约定函数名称由包名+类名+方法名组成，
 // 在该方法中有两个参数，通过第一个参数JNIEnv *的对象可以调用jni.h中封装好的大量函数 ，
@@ -38,6 +40,7 @@ Java_com_android_learn_1jni_MainActivity_changeNameByCpp(JNIEnv *env, jobject th
     jclass clazz2 = env->GetObjectClass(thiz);
 
     // 获取要修改的对象的属性:String 的全类名是Ljava/lang/String; 这里的L代表的是引用类型
+    // 签名Sig：void:V, boolean:Z，byte:B，char:C，short:S，int:I，float:F，long:J，double:D，引用类型:L+全类名;
     jfieldID  jfieldId = env->GetFieldID(clazz1,"name", "Ljava/lang/String;");
     jstring name = env->NewStringUTF("Jtl 学习 JNI");
 
@@ -48,4 +51,44 @@ Java_com_android_learn_1jni_MainActivity_changeNameByCpp(JNIEnv *env, jobject th
     env->DeleteLocalRef(name);
     env->DeleteLocalRef(clazz1);
     env->DeleteLocalRef(clazz2);
+}
+extern "C"
+JNIEXPORT void JNICALL
+Java_com_android_learn_1jni_MainActivity_changeAgeByCpp(JNIEnv *env, jclass clazz) {
+    jfieldID  jfieldId = env->GetStaticFieldID(clazz,"age", "I");
+
+    // jboolean: unsigned char 1字节 8位
+    // jbyte: signed char 1字节 8位
+    // jchar: unsigned short 2字节 16位
+    // jshort: short  2字节 16位
+    // jint: int  4字节 32位
+    // jlong: long  8字节 64位
+    // jfloat: float 4字节  32位
+    // jdouble: double 8字节 64位
+    // jsize: int 4字节 32位
+    jint age = env->GetStaticIntField(clazz,jfieldId);
+    env->SetStaticIntField(clazz,jfieldId,age+9);
+}
+extern "C"
+JNIEXPORT void JNICALL
+Java_com_android_learn_1jni_MainActivity_changeHeightByCpp(JNIEnv *env, jobject thiz) {
+    jclass jclazz = env->GetObjectClass(thiz);
+    jfieldID jfieldId = env->GetFieldID(jclazz,"height","D");
+
+    jdouble finalDouble = env->GetDoubleField(thiz,jfieldId);
+    LOGD("C++ 中的 final height值修改前：%lf",finalDouble)
+    env->SetDoubleField(thiz,jfieldId,174.0);
+    jfieldID jfieldId1 = env->GetFieldID(jclazz,"height","D");
+    jdouble finalDouble1= env->GetDoubleField(thiz,jfieldId1);
+    LOGD("C++ 中的 final height值修改后：%lf",finalDouble1)
+}
+extern "C"
+JNIEXPORT jint JNICALL
+Java_com_android_learn_1jni_MainActivity_getHeightByCpp(JNIEnv *env, jobject thiz) {
+    jclass jclass1 = env->FindClass("com/android/learn_jni/MainActivity");
+    jfieldID  jfieldId = env->GetFieldID(jclass1,"height", "D");
+    jdouble  jdouble1 = env->GetDoubleField(thiz,jfieldId);
+
+    LOGW("C++ 中的 final height：%lf",jdouble1)
+    return jdouble1;
 }
