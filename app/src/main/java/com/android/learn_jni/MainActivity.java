@@ -2,77 +2,39 @@ package com.android.learn_jni;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
-import android.widget.TextView;
+import android.widget.Button;
+import android.widget.LinearLayout;
 
-import com.android.learn_jni.databinding.ActivityMainBinding;
-
+import static com.android.learn_jni.Constants.datas;
 
 public class MainActivity extends AppCompatActivity {
-
     // Used to load the 'le' library on application startup.
     static {
         System.loadLibrary("learnjni");
     }
 
-    private ActivityMainBinding binding;
-    private String name  = "JAVA_NAME";
-    private static int age = 20;
-    private final double height = 180.00;
-    private StringBuilder mStringBuilder = new StringBuilder();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        LinearLayout layout = findViewById(R.id.layout_main_linearlayout);
 
-        binding = ActivityMainBinding.inflate(getLayoutInflater());
-        setContentView(binding.getRoot());
+        for (int i=0;i<datas.length;i++){
+            Button button = new Button(this);
+            button.setText("day:"+(i+1));
+            layout.addView(button);
 
-        // Example of a call to a native method
-        TextView tv = binding.sampleText;
-        tv.setText(stringFromJNI());
-
-        mStringBuilder.append(changeNameByC()+"\n");
-        mStringBuilder.append("没修改的name:"+name+"\n");
-        changeNameByCpp();
-        mStringBuilder.append("修改过的name:"+name+"\n");
-        mStringBuilder.append("修改前的age:"+age+"\n");
-        changeAgeByCpp();
-        mStringBuilder.append("修改后的age:"+age+"\n");
-
-        mStringBuilder.append("修改前的final:height:"+height+"\n");
-        Log.w("height","修改前的final:height:"+height);
-        changeHeightByCpp();
-        Log.w("height","修改后的final:height:"+height);
-        mStringBuilder.append("修改后的final:height:"+height+"\n");
-        tv.setText(mStringBuilder.toString());
-        mStringBuilder.append("----------------------------------"+"\n");
-        tv.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                double height1= getHeightByCpp();
-                mStringBuilder.append("Java中获取到的height:"+height+"\n");
-                Log.w("height","Java中获取C++中获取到的height:"+height1);
-                mStringBuilder.append("Java中获取C++中获取到的height:"+height1+"\n");
-                tv.setText(mStringBuilder.toString());
-            }
-        });
+            int finalI = i;
+            button.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(MainActivity.this,datas[finalI]);
+                    startActivity(intent);
+                }
+            });
+        }
     }
-
-    /**
-     * A native method that is implemented by the 'le' native library,
-     * which is packaged with this application.
-     */
-    public native String stringFromJNI();
-
-    public native void changeNameByCpp();
-
-    public native static void changeAgeByCpp();
-
-    public native static String changeNameByC();
-
-    public native void changeHeightByCpp();
-
-    public native int getHeightByCpp();
 }
