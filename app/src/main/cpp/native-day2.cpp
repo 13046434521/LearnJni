@@ -102,4 +102,5 @@ Java_com_android_learn_1jni_Day2Activity_newStudent(JNIEnv *env,jobject thiz){
     jmethodID tostring = env->GetMethodID(clazz_student,"toString","()Ljava/lang/String;");
     LOGW("C++中调用对象方法：tostring")
     env->CallObjectMethod(student_c,tostring);
+    env->DeleteLocalRef(student_c);
 }

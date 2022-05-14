@@ -45,5 +45,45 @@ Java_com_android_learn_1jni_Day1Activity_changeNameByC(JNIEnv *env, jclass jobje
     注意事项：引用类型要以;结尾。其他类型则不用
 #### 4. JNI中的回收
     1. 回收局部变量：env->DeleteLocalRef()
-    2. 回收全局变量：env->DeleteGlobalRef
+    2. 回收全局变量：env->DeleteGlobalRef()
     3. 释放数组：env->Release***()  env->ReleaseIntArrayElements()
+
+#### 5. JNI获取类的方法
+    1. FindClass：通过全类名： jclass clazz = env->FindClass("com/android/learn_jni/Day2Activity$Student");
+    2. GetObjectClass：通过对象：jclass clazz = env->GetObjectClass(thiz);
+
+#### 6. JNI修改Java数据
+    1. 基本数据类型：
+        GetFieldID获取对象属性，
+        GetDoubleField获取属性的值，
+        SetDoubleField设置属性的值
+    2. 数组：
+        基本数据类型：GetIntArrayElements，直接返回数组指针
+        引用数据类型：GetObjectArrayElement，获取具体位置的对象。
+        刷新数据回Java：ReleaseIntArrayElements(,,JNI_OK);
+        JNI_OK(0) :对JAVA数组进行更新，释放内存空间
+        JNI_COMMIT(1) :对JAVA数组进行更新，不释放内存空间
+        JNI_ABORT(2):不更新JAVA数组，释放内存空间
+
+#### 7. JNI调用Java方法
+    1. 获取class：  jclass clazz = env->GetObjectClass(thiz);
+    2. 获取MethodId：jmethodID  jmethodId = env->GetMethodID(clazz,"add","(ILjava/lang/String;)I");
+    3. 生成对应参数：jstring args = env->NewStringUTF("C++里传来的第一个参数是95");
+    4. 调用JNI中对象的Call方法：jint data = env->CallIntMethod(thiz,jmethodId,95,args);
+
+    注意事项：构造函数的方法名是  <init>  ，返回值  必须是V；
+#### 8. JNI创建Java对象
+    1. 获取class：jclass clazz_student = env->FindClass("com/android/learn_jni/Day2Activity$Student");
+    2. 创建对象：   
+        1.AllocObject:不执行构造函数
+            1. env->AllocObject(clazz_student)
+        2.NewObject：执行构造函数
+            1. 获取构造器methodID:jmethodID jmethodId = env->GetMethodID(clazz_student,"<init>", "(Ljava/lang/String;I)V");
+            2 创建对象：NewObject：jobject student_c = env->NewObject(clazz_student,jmethodId,29);//创建对象，需要手动回收
+    3. 回收对象：env->DeleteLocalRef(student_c);
+#### 9. JNI全局对象
+    1. 无论是否在JNI方法中。所有对象都是局部对象。正规情况下都需要手动回收。方法弹栈时会自动回收。
+    2. 局部变量升级为全局变量：env->NewGlobalRef(clazz_activity); // 将局部变量，改为全局变量。
+    3. 全局变量需要手动回收：env->DeleteGlobalRef(clazz_activity)。
+    4. 对象即便回收了，指针也不为null，记得手动置为null。
+        
