@@ -3,6 +3,3 @@
 //
 
 #include <log.h>
-
-
-//#define LOGD(...) __android_log_print(andoir,TAG,__aRG)

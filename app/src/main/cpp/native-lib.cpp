@@ -48,6 +48,7 @@ Java_com_android_learn_1jni_Day1Activity_changeNameByCpp(JNIEnv *env, jobject th
     env->SetObjectField(thiz,jfieldId,name);
 
     // 回收创建的对象
+
     env->DeleteLocalRef(name);
     env->DeleteLocalRef(clazz1);
     env->DeleteLocalRef(clazz2);
