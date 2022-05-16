@@ -15,7 +15,8 @@ android {
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         externalNativeBuild {
             cmake {
-                cppFlags '-std=c++11'
+                arguments "-DWO_SHI_NI_DIE=${projectDir.absolutePath}" // 设置自定义参数到CMAKE中
+                cppFlags '-std=c++11' // 设置标记到CMAKE_CXX_FLAG中
             }
         }
 
