@@ -86,4 +86,14 @@ Java_com_android_learn_1jni_Day1Activity_changeNameByC(JNIEnv *env, jclass jobje
     2. 局部变量升级为全局变量：env->NewGlobalRef(clazz_activity); // 将局部变量，改为全局变量。
     3. 全局变量需要手动回收：env->DeleteGlobalRef(clazz_activity)。
     4. 对象即便回收了，指针也不为null，记得手动置为null。
-        
+
+
+### 动态注册和静态注册
+#### 注册种类
+    ·静态注册：最常规的注册，Java_包名_类名_方法名(JNIEnv *env ,jobject thiz);
+    ·动态注册：通过env->RegisterNatives();方法来注册，通常写在JNI_OnLoad方法里
+#### 动态注册优点：
+    ·在OnLoad时全部注册完毕，而不像静态注册，每次调用的时候才注册，节省性能
+    ·更加安全，静态注册的话，可以通过Java中的方法名反推出JNI中的方法名称，安全性较差。
+        动态注册的话，可以随意指定C++中的方法名称,反编译后安全性更高。
+

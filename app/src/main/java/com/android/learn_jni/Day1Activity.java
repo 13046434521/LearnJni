@@ -10,10 +10,7 @@ import android.widget.TextView;
 import com.android.learn_jni.databinding.ActivityMainBinding;
 
 
-public class Day1Activity extends AppCompatActivity {
-
-
-
+public class Day1Activity extends BaseActivity {
     private ActivityMainBinding binding;
     private String name  = "JAVA_NAME";
     private static int age = 20;

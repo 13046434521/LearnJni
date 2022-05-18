@@ -10,12 +10,8 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.LearnJni">
         <activity
-            android:name=".MainActivity"
-            android:exported="true">
-        </activity>
-        <activity
-            android:name=".Day2Activity"
-            android:exported="true">
+            android:name=".Day3Activity"
+            android:exported="true" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -23,8 +19,16 @@
             </intent-filter>
         </activity>
         <activity
+            android:name=".MainActivity"
+            android:exported="true"></activity>
+        <activity
+            android:name=".Day2Activity"
+            android:exported="true">
+
+        </activity>
+        <activity
             android:name=".Day1Activity"
-            android:exported="false"></activity>
+            android:exported="false" />
     </application>
 
 </manifest>

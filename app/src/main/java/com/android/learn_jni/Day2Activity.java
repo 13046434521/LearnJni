@@ -6,10 +6,8 @@ import android.app.Application;
 import android.os.Bundle;
 import android.util.Log;
 
-public class Day2Activity extends AppCompatActivity {
-    static {
-        System.loadLibrary("learnjni");
-    }
+public class Day2Activity extends BaseActivity {
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

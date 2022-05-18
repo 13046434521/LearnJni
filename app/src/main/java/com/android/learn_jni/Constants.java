@@ -9,4 +9,5 @@ import java.util.ArrayList;
  */
 public class Constants {
     public static Class[] datas = new Class[]{Day1Activity.class,Day2Activity.class};
+    public static String TAG ="LearnJniCpp";
 }

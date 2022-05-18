@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".Day3Activity">
+    <Button
+        android:id="@+id/btn_day3_dynamic1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="dynamicRegister1"
+        android:text="动态注册1"/>
+    <Button
+        android:id="@+id/btn_day3_dynamic2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="dynamicRegister2"
+        android:text="动态注册2"/>
+
+    <Button
+        android:id="@+id/btn_day3_nativethread"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="nativethread"
+        android:text="C++中创建线程"/>
+</LinearLayout>

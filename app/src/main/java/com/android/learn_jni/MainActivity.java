@@ -10,12 +10,7 @@ import android.widget.LinearLayout;
 
 import static com.android.learn_jni.Constants.datas;
 
-public class MainActivity extends AppCompatActivity {
-    // Used to load the 'le' library on application startup.
-    static {
-        System.loadLibrary("learnjni");
-    }
-
+public class MainActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

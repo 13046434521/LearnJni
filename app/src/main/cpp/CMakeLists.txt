@@ -46,4 +46,5 @@ find_library( # Sets the name of the path variable.
 # 链接库:需添加so库名称
 target_link_libraries( # Specifies the target library.
         learnjni
+#        log)
         ${log-lib})
