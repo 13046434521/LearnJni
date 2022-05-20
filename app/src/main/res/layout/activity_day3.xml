@@ -21,9 +21,16 @@
         android:text="动态注册2"/>
 
     <Button
-        android:id="@+id/btn_day3_nativethread"
+        android:id="@+id/btn_day3_nativethread1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:onClick="nativethread"
-        android:text="C++中创建线程"/>
+        android:onClick="nativethread1"
+        android:text="C++中创建线程:通过AttachCurrentThread（不能FindClass应用类加载器加载的类）"/>
+
+    <Button
+        android:id="@+id/btn_day3_nativethread2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="nativethread2"
+        android:text="C++中创建线程：GetEnv（没有Attach线程到Jvm上，所以GetEnv时返回-2）"/>
 </LinearLayout>

@@ -7,6 +7,8 @@ import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
+import java.nio.ByteBuffer;
+
 public class Day3Activity extends BaseActivity {
 
     @Override
@@ -19,8 +21,8 @@ public class Day3Activity extends BaseActivity {
 
     public native String dynamicRegister(int age);
 
-    public native void nativeThread();
-
+    public native void nativeThread_AttachCurrentThread();
+    public native void nativeThread_GetEnv();
     public void dynamicRegister1(View view) {
         dynamicRegister();
     }
@@ -31,13 +33,16 @@ public class Day3Activity extends BaseActivity {
         ((TextView) view).setText(msg + ":" + aa);
     }
 
-    public void nativethread(View view) {
-        nativeThread();
+    public void nativethread1(View view) {
+        nativeThread_AttachCurrentThread();
+    }
+    public void nativethread2(View view) {
+        nativeThread_GetEnv();
     }
 
     public void printThreadName(){
         String msg =  Thread.currentThread().getName();
 
-        Log.e(TAG,msg);
+        Log.e(TAG,"Java层：printThreadName:"+msg+"   id:"+Thread.currentThread().getId());
     }
 }

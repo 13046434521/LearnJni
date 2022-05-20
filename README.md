@@ -97,3 +97,87 @@ Java_com_android_learn_1jni_Day1Activity_changeNameByC(JNIEnv *env, jclass jobje
     ·更加安全，静态注册的话，可以通过Java中的方法名反推出JNI中的方法名称，安全性较差。
         动态注册的话，可以随意指定C++中的方法名称,反编译后安全性更高。
 
+#### 动态注册
+    ·JNINativeMethod:结构体。第一个参数是Java中的方法名，第二个：方法签名，第三个：C++中的结构体指针
+    ·在JNI_OnLoad方法中进行注册
+    ·env->RegisterNatives(要注册的方法所在的类, 要注册的JNINativeMethod, 注册个数);
+    ·动态注册的方法，自动带JNIEnv和jobject。也可以省略不写
+    ·动态注册的方法，可以通过签名来区别Java中重载的方法。
+    ·不同的Android版本对应不同的JNI_VERSION,JNI_OnLoad时最好返回最高版本的JNI_VERSION，否则会报错。
+
+```c++
+// Bad JNI version returned from JNI_OnLoad
+// android 1.6-4.3 version >= JNI_VERSION_1_2 
+// android 4.4-7.1 version == JNI_VERSION_1_2 | JNI_VERSION_1_4 | JNI_VERSION_1_6
+void dynamicRegister(){}
+
+jstring dynamicRegister1(JNIEnv *env, jobject obj, jint age){}
+
+void nativeThread1(JNIEnv *env, jobject obj){}
+
+void nativeThread2(JNIEnv *env, jobject obj){}
+
+static JNINativeMethod methods[] = {
+        {"dynamicRegister",                  "()V",                   (void *) dynamicRegister},
+        {"dynamicRegister",                  "(I)Ljava/lang/String;", (jstring *) dynamicRegister1},
+        {"nativeThread_AttachCurrentThread", "()V",                   (void *) nativeThread1},
+        {"nativeThread_GetEnv",              "()V",                   (void *) nativeThread2}
+};
+jint JNI_OnLoad(JavaVM *vm, void *args) {
+    ::vm = vm;
+    JNIEnv *env = nullptr;
+
+    //C 中 JNI_OK:0 就是返回成功。
+    //二级指针的目的是给一级指针赋值
+    //jint GetEnv(void** env, jint version)：这里需要二级指针，所以我需要对一级指针取址
+    jint res = vm->GetEnv((void **) &env, JNI_VERSION_1_6);
+    if (res != JNI_OK) {
+        LOGD("JNI_OnLoad失败:%d", res)
+        return JNI_FALSE;
+    }
+    LOGD("JNI_OnLoad成功:%d", res)
+    jclass day3clazz = env->FindClass("com/android/learn_jni/Day3Activity");
+    jsize size = sizeof methods / sizeof(JNINativeMethod);
+
+    for (int i = 0; i < size; ++i) {
+        JNINativeMethod *nativeMethod = methods + i;
+        jint res_method = env->RegisterNatives(day3clazz, nativeMethod, 1);
+        if (res_method != JNI_OK) {
+            LOGW("注册方法:%s ,签名:%s,失败", nativeMethod->name, nativeMethod->signature)
+        } else {
+            LOGW("注册方法:%s,签名:%s,成功", nativeMethod->name, nativeMethod->signature)
+        }
+    }
+
+    return JNI_VERSION_1_6;
+}
+```
+#### JNIEnv和jobject
+    1. JNIEnv 和线程相对应，不能跨线程使用
+    2. jobject 属于局部变量，也不能跨线程使用（每一个线程有一个栈，不同的线程对应不同的栈）
+    3. jobject 属于局部变量，不能跨函数方法使用（每一个函数对应一个栈帧。栈帧中的局部变量不能跨栈帧使用）
+    4. jobject 改为全局变量(env->NewGlobalRef(obj);)，就可以跨函数使用
+
+#### C++创建子线程
+    1. #include "pthread.h"
+    2. 创建tid pthread_t tid = 199366（如果第三步的线程创建成功，这里的值会被修改为线程id）
+    3. pthread_create(pthread_t,线程属性通常为null,函数名(线程运行的函数类似于Runnable),第三个参数里运行函数里的参数，无参为null)
+    4. 线程创建成功返回0
+    5.pthread_join(tid,nullptr); 当前线程等待tid线程执行完毕,在继续执行
+```c++
+    pthread_t tid = 199366;
+    pthread_create(&tid, nullptr, cppRunThread2, nullptr);
+```
+#### JavaVM,JniEnv,jobject
+    1. 一个进程对应一个JavaVM
+    2. 获取JavaVM的方法有两种:
+        ·JNI_OnLoad中保存一份
+        ·env.GetJavaVM()
+    3. JNIEnv和线程绑定，不同的线程，JNIEnv不是同一个示实例
+    4. Java创建线程时，自动创建了JNIEnv，该JNIEnv可以通过应用类加载器加载自定义类.
+    5. C++创建的线程，没有创建JNIEnv，需要手动关联
+    6. Java创建的线程，可以通过vm->GetEnv()，来获取JNIEnv
+    7. C++创建的线程，可以通过vm->AttachCurrentThread,来关联JNIEnv，此种方法的JNIEnv无法加载自定义类
+    8. JNI静态方法（静态/动态注册）中的jclass，和调用类绑定，不同的类，jclass是不同的地址
+    9. JNI普通方法（静态/动态注册）中的jobject和调用的对象实例绑定，不同的对象，此处的jobject是不同的。
+    
